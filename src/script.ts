@@ -1,31 +1,31 @@
-import Estatisticas from "./Estatisticas.js";
-import { CountList } from "./countBy.js";
 import fetchData from "./fetchData.js";
-import normalizarTransacao from "./normalizarTransacao.js";
+import normalizeTransaction from "./normalizeTransaction.js";
+import Statistics from "./Statistics.js";
+import { CountList } from "./countBy.js";
 
 async function handleData() {
-  const data = await fetchData<TransacaoAPI[]>(
+  const data = await fetchData<TransactionAPI[]>(
     "https://api.origamid.dev/json/transacoes.json?"
   );
   if (!data) return;
 
-  const transacoes = data.map(normalizarTransacao);
-  preencherTabela(transacoes);
-  preencherEstatisticas(transacoes);
+  const transactions = data.map(normalizeTransaction);
+  fillTable(transactions);
+  fillStatistics(transactions);
 }
 handleData();
 
-function preencherLista(lista: CountList, containerId: string): void {
+function fillList(list: CountList, containerId: string): void {
   const containerElement = document.getElementById(containerId);
   if (containerElement) {
-    Object.keys(lista).forEach((key) => {
-      containerElement.innerHTML += `<p>${key}: ${lista[key]}</p>`;
+    Object.keys(list).forEach((key) => {
+      containerElement.innerHTML += `<p>${key}: ${list[key]}</p>`;
     });
   }
 }
 
-function preencherEstatisticas(transacoes: Transacao[]): void {
-  const data = new Estatisticas(transacoes);
+function fillStatistics(transacoes: Transaction[]): void {
+  const data = new Statistics(transacoes);
 
   const totalElement = document.querySelector<HTMLElement>("#total span");
   if (totalElement) {
@@ -35,26 +35,26 @@ function preencherEstatisticas(transacoes: Transacao[]): void {
     });
   }
 
-  preencherLista(data.pagamento, "pagamento");
-  preencherLista(data.status, "status");
+  fillList(data.payment, "payment");
+  fillList(data.status, "status");
 
-  const diaElement = document.querySelector<HTMLElement>("#dia span");
-  if (diaElement) {
-    diaElement.innerText = data.melhorDia[0];
+  const dayElement = document.querySelector<HTMLElement>("#day span");
+  if (dayElement) {
+    dayElement.innerText = data.bestDay[0];
   }
 }
 
-function preencherTabela(transacoes: Transacao[]): void {
-  const tabela = document.querySelector("#transacoes tbody");
+function fillTable(transactions: Transaction[]): void {
+  const tabela = document.querySelector("#transactions tbody");
   if (!tabela) return;
-  transacoes.forEach((transacao) => {
+  transactions.forEach((transaction) => {
     tabela.innerHTML += `
       <tr>
-        <td>${transacao.nome}</td>
-        <td>${transacao.email}</td>
-        <td>R$ ${transacao.moeda}</td>
-        <td>${transacao.pagamento}</td>
-        <td>${transacao.status}</td>
+        <td>${transaction.name}</td>
+        <td>${transaction.email}</td>
+        <td>R$ ${transaction.currency}</td>
+        <td>${transaction.payment}</td>
+        <td>${transaction.status}</td>
       </tr>
     `;
   });
