@@ -37,6 +37,11 @@ function preencherEstatisticas(transacoes: Transacao[]): void {
 
   preencherLista(data.pagamento, "pagamento");
   preencherLista(data.status, "status");
+
+  const diaElement = document.querySelector<HTMLElement>("#dia span");
+  if (diaElement) {
+    diaElement.innerText = data.melhorDia[0];
+  }
 }
 
 function preencherTabela(transacoes: Transacao[]): void {
